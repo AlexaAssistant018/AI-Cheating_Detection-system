@@ -1,0 +1,30 @@
+{
+  "name": "ai-cheating-detection-system",
+  "version": "1.0.0",
+  "description": "AI-Based Cheating Detection System - Final Year Project",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "cd frontend && npm install && cd ../backend && pip install -r requirements.txt && cd ../ai-module && pip install -r requirements.txt",
+    "dev": "concurrently \"cd backend && uvicorn main:socket_app --reload --port 5000\" \"cd frontend && npm run dev\" \"cd ai-module && python app.py\"",
+    "start-backend": "cd backend && uvicorn main:socket_app --reload --port 5000",
+    "start-frontend": "cd frontend && npm run dev",
+    "start-ai": "cd ai-module && python app.py",
+    "build": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "ai",
+    "cheating-detection",
+    "proctoring",
+    "opencv",
+    "mediapipe",
+    "react",
+    "fastapi",
+    "mongodb",
+    "flask"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

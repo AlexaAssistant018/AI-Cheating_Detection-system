@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:6.0
+    container_name: cheating-detection-db
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: cheating-detection
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - cheating-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cheating-detection-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongodb:27017/cheating-detection
+      - JWT_SECRET=${JWT_SECRET:-default_secret_change_in_production}
+    depends_on:
+      - mongodb
+    networks:
+      - cheating-network
+
+  # AI Detection Module
+  ai-module:
+    build:
+      context: ./ai-module
+      dockerfile: Dockerfile
+    container_name: cheating-detection-ai
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    networks:
+      - cheating-network
+
+  # Frontend (Production Build)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cheating-detection-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - ai-module
+    networks:
+      - cheating-network
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  cheating-network:
+    driver: bridge
